@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/mikolajgasior/argocd-apps-preview/pkg/logmsg"
+	"argocd-apps-preview/internal/logmsg"
 	"github.com/spf13/cobra"
 )
 

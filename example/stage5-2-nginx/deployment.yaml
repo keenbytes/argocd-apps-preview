@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stage5-2-nginx
+  labels:
+    app: stage5-2-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stage5-2-nginx
+  template:
+    metadata:
+      labels:
+        app: stage5-2-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80

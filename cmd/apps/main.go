@@ -10,11 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mikolajgasior/argocd-apps-preview/pkg/argocd"
-	"github.com/mikolajgasior/argocd-apps-preview/pkg/command"
-	"github.com/mikolajgasior/argocd-apps-preview/pkg/kind"
-	"github.com/mikolajgasior/argocd-apps-preview/pkg/kube"
-	"github.com/mikolajgasior/argocd-apps-preview/pkg/logmsg"
+	"argocd-apps-preview/internal/argocd"
+	"argocd-apps-preview/internal/command"
+	"argocd-apps-preview/internal/kind"
+	"argocd-apps-preview/internal/kube"
+	"argocd-apps-preview/internal/logmsg"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )

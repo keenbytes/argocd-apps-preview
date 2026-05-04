@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stage4a-nginx
+  labels:
+    app: stage4a-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stage4a-nginx
+  template:
+    metadata:
+      labels:
+        app: stage4a-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80

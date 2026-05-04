@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: stage5-apps
+  namespace: tools
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/keenbytes/argocd-apps-preview
+        revision: main
+        directories:
+          - path: example/stage5-1-nginx
+          - path: example/stage5-2-nginx
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: stage5
+      source:
+        repoURL: https://github.com/keenbytes/argocd-apps-preview
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: tools
+      syncPolicy:
+        automated: {}

@@ -1,17 +1,16 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: stage0
+  name: stage2-apps
   namespace: tools
 spec:
-  project: default
+  project: stage2
   source:
     repoURL: https://github.com/keenbytes/argocd-apps-preview
-    targetRevision: HEAD
-    path: example/stage0-app
+    targetRevision: main
+    path: example/stage2-apps
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: tools
   syncPolicy:
     automated: {}
