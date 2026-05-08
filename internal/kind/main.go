@@ -8,8 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"argocd-apps-preview/internal/command"
-	"argocd-apps-preview/internal/logmsg"
+	"argocd-app-of-apps-diff-preview/internal/command"
+	"argocd-app-of-apps-diff-preview/internal/logmsg"
 )
 
 //go:embed cluster.yml

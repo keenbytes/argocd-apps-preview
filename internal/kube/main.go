@@ -7,7 +7,7 @@ import (
 	"io"
 	"os"
 
-	"argocd-apps-preview/internal/command"
+	"argocd-app-of-apps-diff-preview/internal/command"
 	yamlStd "gopkg.in/yaml.v3"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	yamlK8s "sigs.k8s.io/yaml"

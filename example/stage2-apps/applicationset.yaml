@@ -6,7 +6,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: https://github.com/mikolajgasior/argocd-apps-preview
+        repoURL: https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview
         revision: main
         directories:
           - path: example/stage3-1-nginx
@@ -19,7 +19,7 @@ spec:
     spec:
       project: stage3
       source:
-        repoURL: https://github.com/mikolajgasior/argocd-apps-preview
+        repoURL: https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview
         targetRevision: main
         path: '{{path}}'
       destination:

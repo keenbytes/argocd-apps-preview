@@ -6,7 +6,7 @@ metadata:
 spec:
   project: stage1
   source:
-    repoURL: https://github.com/mikolajgasior/argocd-apps-preview
+    repoURL: https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview
     targetRevision: main
     path: example/stage1-app
   destination:

@@ -1,7 +1,7 @@
 package diff
 
 import (
-	"argocd-apps-preview/internal/command"
+	"argocd-app-of-apps-diff-preview/internal/command"
 	"bufio"
 	"context"
 	"fmt"
@@ -38,7 +38,7 @@ type resourceInfo struct {
 }
 
 func GenerateGitDiff(appsBaseDir, appsTargetDir, outputDir string) (string, error) {
-	tmpDir, err := os.MkdirTemp("", "argocd-apps-preview-git-*")
+	tmpDir, err := os.MkdirTemp("", "argocd-app-of-apps-diff-preview-git-*")
 	if err != nil {
 		return "", err
 	}

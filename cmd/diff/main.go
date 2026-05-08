@@ -1,8 +1,8 @@
 package main
 
 import (
-	"argocd-apps-preview/internal/diff"
-	"argocd-apps-preview/internal/logmsg"
+	"argocd-app-of-apps-diff-preview/internal/diff"
+	"argocd-app-of-apps-diff-preview/internal/logmsg"
 	"fmt"
 	"os"
 	"os/exec"

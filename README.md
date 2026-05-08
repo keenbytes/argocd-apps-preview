@@ -1,4 +1,4 @@
-# argocd-apps-preview
+# argocd-app-of-apps-diff-preview
 A lightweight Go utility for generating previews and computing diffs for ArgoCD "app-of-apps" configurations, including 
 nested Applications and ApplicationSets.
 
@@ -44,7 +44,12 @@ rm -rf outputs*
 mkdir outputs-{main,example-1,diff}
 cd cmd/apps/ && go build . && cd ../../
 cd cmd/diff/ && go build . && cd ../../
-go run cmd/apps/*.go
+./cmd/apps/apps --manifests ./manifests --output-apps ./outputs-main/ \
+  --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
+  --replace-target-revision main
+./cmd/apps/apps --manifests ./manifests --output-apps ./outputs-example-1/ \
+  --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
+  --replace-target-revision example-1
 ```
 
 ## Contributing

@@ -1,4 +1,4 @@
-module argocd-apps-preview
+module argocd-app-of-apps-diff-preview
 
 go 1.26.0
 

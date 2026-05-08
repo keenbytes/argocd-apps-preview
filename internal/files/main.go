@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"argocd-apps-preview/internal/logmsg"
+	"argocd-app-of-apps-diff-preview/internal/logmsg"
 )
 
 func DownloadFile(url string) (string, error) {

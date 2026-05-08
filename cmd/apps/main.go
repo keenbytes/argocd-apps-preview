@@ -11,11 +11,11 @@ import (
 	"strings"
 	"time"
 
-	"argocd-apps-preview/internal/argocd"
-	"argocd-apps-preview/internal/command"
-	"argocd-apps-preview/internal/kind"
-	"argocd-apps-preview/internal/kube"
-	"argocd-apps-preview/internal/logmsg"
+	"argocd-app-of-apps-diff-preview/internal/argocd"
+	"argocd-app-of-apps-diff-preview/internal/command"
+	"argocd-app-of-apps-diff-preview/internal/kind"
+	"argocd-app-of-apps-diff-preview/internal/kube"
+	"argocd-app-of-apps-diff-preview/internal/logmsg"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
