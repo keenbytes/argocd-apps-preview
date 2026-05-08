@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stage5b-1-nginx-example-1
+  labels:
+    app: stage5b-1-nginx-example-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stage5b-1-nginx-example-1
+  template:
+    metadata:
+      labels:
+        app: stage5b-1-nginx-example-1
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:stable-alpine
+          ports:
+            - containerPort: 80

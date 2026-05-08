@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: stage4c
+  namespace: tools
+spec:
+  description: Description
+  sourceRepos:
+    - https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: tools
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stage4b-apps-example-1
+  namespace: tools
+spec:
+  project: stage4b
+  source:
+    repoURL: https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview
+    targetRevision: main
+    path: example/stage4b-apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tools
+  syncPolicy:
+    automated: {}

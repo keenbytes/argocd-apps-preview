@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: stage3-apps
+  name: stage5b-apps-example-1
   namespace: tools
 spec:
   generators:
@@ -9,16 +9,12 @@ spec:
         repoURL: https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview
         revision: main
         directories:
-          - path: example/stage3-1-nginx
-          - path: example/stage3-2-nginx
-          - path: example/stage3-3-app
-          - path: example/stage3-4-app-example-1
-          - path: example/stage3-5-app-example-1
+          - path: example/stage5b-1-nginx-example-1
   template:
     metadata:
       name: '{{path.basename}}'
     spec:
-      project: stage3
+      project: stage5
       source:
         repoURL: https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview
         targetRevision: main
