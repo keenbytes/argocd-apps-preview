@@ -2,18 +2,12 @@
 A lightweight Go utility for generating previews and computing diffs for ArgoCD "app-of-apps" configurations, including 
 nested Applications and ApplicationSets.
 
-## Status
-
-**⚠️ Work In Progress**
-
-This project is actively under development. Some features are incomplete.
-
 ## Expected Features
 
 - 🌳 Handle nested applications and ApplicationSets
 - 📋 Generate previews for app-of-apps configurations
-- 🔍 Compute diffs between two sets of application manifests (WIP)
-- 🔄 Branch switching support (WIP)
+- 🔍 Compute diffs between two sets of application manifests
+- 🔄 Branch switching support
 - ⚡ Lightweight, single binary distribution
 
 ## Motivation
@@ -36,6 +30,8 @@ The following tools must be installed:
 * kind
 * argocd cli
 * kubectl
+* bash
+* git
 
 ## Running
 
@@ -44,12 +40,16 @@ rm -rf outputs*
 mkdir outputs-{main,example-1,diff}
 cd cmd/apps/ && go build . && cd ../../
 cd cmd/diff/ && go build . && cd ../../
+
 ./cmd/apps/apps --manifests ./manifests --output-apps ./outputs-main/ \
   --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
   --replace-target-revision main
+
 ./cmd/apps/apps --manifests ./manifests --output-apps ./outputs-example-1/ \
   --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
   --replace-target-revision example-1
+
+./cmd/diff/diff --apps-base ./outputs-main/ --apps-target ./outputs-example-1/ --output-diff ./outputs-diff/
 ```
 
 ## Contributing

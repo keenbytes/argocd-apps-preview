@@ -153,6 +153,50 @@ func AddResourceAbove(diffSplitDir, appsBaseDir, appsTargetDir string) error {
 	return nil
 }
 
+func GenerateMarkdown(diffSplitDir, outputDir string) error {
+	pattern := filepath.Join(diffSplitDir, "*.diff")
+	diffFiles, err := filepath.Glob(pattern)
+	if err != nil {
+		return fmt.Errorf("Error globbing diff files: %v\n", err)
+	}
+
+	markdownDiffFile := filepath.Join(outputDir, "diff.md")
+
+	outFile, err := os.OpenFile(markdownDiffFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return fmt.Errorf("opening output file %s: %w", markdownDiffFile, err)
+	}
+	defer outFile.Close()
+
+	writer := bufio.NewWriter(outFile)
+
+	for _, diffFile := range diffFiles {
+		baseName := filepath.Base(diffFile)
+		appName := strings.TrimSuffix(baseName, ".diff")
+		appName = strings.ReplaceAll(appName, "__", "/")
+
+		fmt.Fprintf(writer, "<details><summary>Application: %s</summary>\n", appName)
+		fmt.Fprintln(writer, "<br>")
+		fmt.Fprintln(writer, "")
+		fmt.Fprintln(writer, "<pre>")
+
+		if err := processDiffFileForMarkdown(diffFile, writer); err != nil {
+			fmt.Fprintf(os.Stderr, "Error processing %s: %v\n", diffFile, err)
+			continue
+		}
+
+		fmt.Fprintln(writer, "</pre>")
+		fmt.Fprintln(writer, "</details>")
+		fmt.Fprintln(writer, "")
+	}
+
+	if err := writer.Flush(); err != nil {
+		return fmt.Errorf("Error flushing output: %v", err)
+	}
+
+	return nil
+}
+
 func addResourceAboveFile(diffFilePath, appsBaseDir, appsTargetDir string) error {
 	lines, err := readLines(diffFilePath)
 	if err != nil {
@@ -333,4 +377,31 @@ func writeLines(path string, lines []string) error {
 		fmt.Fprintln(writer, line)
 	}
 	return writer.Flush()
+}
+
+func processDiffFileForMarkdown(diffFile string, writer *bufio.Writer) error {
+	file, err := os.Open(diffFile)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	lineCount := 0
+
+	for scanner.Scan() {
+		lineCount++
+		// Skip the first 4 lines
+		if lineCount <= 4 {
+			continue
+		}
+
+		line := scanner.Text()
+		line = strings.ReplaceAll(line, ">", "&gt;")
+		line = strings.ReplaceAll(line, "<", "&lt;")
+
+		fmt.Fprintln(writer, line)
+	}
+
+	return scanner.Err()
 }
