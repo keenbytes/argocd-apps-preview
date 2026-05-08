@@ -40,8 +40,10 @@ The following tools must be installed:
 ## Running
 
 ```
-rm -rf outputs
-mkdir outputs
+rm -rf outputs*
+mkdir outputs-{main,example-1,diff}
+cd cmd/apps/ && go build . && cd ../../
+cd cmd/diff/ && go build . && cd ../../
 go run cmd/apps/*.go
 ```
 

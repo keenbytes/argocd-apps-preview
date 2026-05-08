@@ -6,7 +6,7 @@ metadata:
 spec:
   project: stage4b
   source:
-    repoURL: https://github.com/keenbytes/argocd-apps-preview
+    repoURL: https://github.com/mikolajgasior/argocd-apps-preview
     targetRevision: main
     path: example/stage4b-apps
   destination:
