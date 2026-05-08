@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -15,8 +16,40 @@ import (
 	"argocd-apps-preview/internal/kind"
 	"argocd-apps-preview/internal/kube"
 	"argocd-apps-preview/internal/logmsg"
+
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
+)
+
+const (
+	maxRecursions                  = 7
+	ctxClusterTimeoutSeconds       = 120
+	ctxArgoCDTimeoutSeconds        = 360
+	sleepSecondsAfterArgoCDInstall = 4
+)
+
+const (
+	kindName        = "argocd-app-prev"
+	kindImage       = "kindest/node:v1.33.4"
+	argoCDNamespace = "tools"
+	argoCDVersion   = "v2.14.11"
+	argoCDNodePort  = 30443
+)
+
+const (
+	exitKindNotFound                  = 101
+	exitArgoCDNotFound                = 102
+	exitKubectlNotFound               = 103
+	exitDirNotFound                   = 104
+	exitOutputsDirNotFound            = 105
+	exitOutputsDirNotEmpty            = 106
+	exitCreatingClusterFailed         = 201
+	exitArgoCDInstallationFailed      = 301
+	exitArgoCDLoggingFailed           = 303
+	exitApplyingSecretsFailed         = 304
+	exitApplyingManifestsFailed       = 305
+	exitRecursivelyApplyingAppsFailed = 306
+	exitDumpingAppManifestsFailed     = 307
 )
 
 var (
@@ -75,17 +108,17 @@ func execute(manifestsDir, secretsDir, hooksDir, outputAppsDir, repoURL, revisio
 	}
 
 	// start kind cluster
-	cluster := kind.NewKind(KindName, KindImage)
+	cluster := kind.NewKind(kindName, kindImage)
 	_ = cluster.Delete()
 
-	ctxCluster, cancelCluster := context.WithTimeout(context.Background(), CtxClusterTimeoutSeconds*time.Second)
+	ctxCluster, cancelCluster := context.WithTimeout(context.Background(), ctxClusterTimeoutSeconds*time.Second)
 	defer cancelCluster()
 
 	err := cluster.Create(ctxCluster)
 	if err != nil {
-		logmsg.Error(ErrMsgCreatingClusterFailed, err)
+		logmsg.Error("creating kind cluster failed", err)
 		_ = cluster.Delete()
-		os.Exit(ExitCreatingClusterFailed)
+		os.Exit(exitCreatingClusterFailed)
 	}
 	defer cluster.Delete()
 
@@ -93,42 +126,42 @@ func execute(manifestsDir, secretsDir, hooksDir, outputAppsDir, repoURL, revisio
 	kubeClient := kube.NewKube(getKubeContext())
 
 	// install argocd on the kind cluster
-	acd := argocd.NewArgoCD(kubeClient, ArgoCDNamespace, ArgoCDVersion, ArgoCDNodePort)
+	acd := argocd.NewArgoCD(kubeClient, argoCDNamespace, argoCDVersion, argoCDNodePort)
 
 	// add timeout to context for argocd installation
-	ctxArgoCD, cancelArgoCD := context.WithTimeout(context.Background(), CtxArgoCDTimeoutSeconds*time.Second)
+	ctxArgoCD, cancelArgoCD := context.WithTimeout(context.Background(), ctxArgoCDTimeoutSeconds*time.Second)
 	defer cancelArgoCD()
 
 	err = acd.Install(ctxArgoCD)
 	if err != nil {
-		logmsg.Error(ErrMsgArgoCDInstallationFailed, err)
-		os.Exit(ExitArgoCDInstallationFailed)
+		logmsg.Error("argocd installation failed", err)
+		os.Exit(exitArgoCDInstallationFailed)
 	}
 
 	// wait a while until argocd starts up
-	time.Sleep(SleepSecondsAfterArgoCDInstall * time.Second)
+	time.Sleep(sleepSecondsAfterArgoCDInstall * time.Second)
 
 	// log in to argocd
 	err = acd.Login(ctxArgoCD)
 	if err != nil {
-		logmsg.Error(ErrMsgArgoCDLoggingFailed, err)
-		os.Exit(ExitArgoCDLoggingFailed)
+		logmsg.Error("logging in to argocd failed", err)
+		os.Exit(exitArgoCDLoggingFailed)
 	}
 
 	// apply manifests from the secrets (to allow argocd pull from private repositories etc.)
 	if secretsDir != "" {
-		err = applyManifests(ctxArgoCD, kubeClient, secretsDir, ArgoCDNamespace)
+		err = applyManifests(ctxArgoCD, kubeClient, secretsDir, argoCDNamespace)
 		if err != nil {
-			logmsg.Error(ErrMsgApplyingSecretsFailed, err)
-			os.Exit(ExitApplyingSecretsFailed)
+			logmsg.Error("applying secrets failed", err)
+			os.Exit(exitApplyingSecretsFailed)
 		}
 	}
 
 	// apply initial manifests (we need to start somewhere)
 	err = applyAppManifestsFromDir(ctxArgoCD, kubeClient, acd, manifestsDir, hooksDir, [2]string{repoURL, revision})
 	if err != nil {
-		logmsg.Error(ErrMsgApplyingManifestsFailed, err)
-		os.Exit(ExitApplyingManifestsFailed)
+		logmsg.Error("applying initial manifests failed", err)
+		os.Exit(exitApplyingManifestsFailed)
 	}
 
 	// add timeout to context for getting the applications recursively
@@ -141,22 +174,22 @@ func execute(manifestsDir, secretsDir, hooksDir, outputAppsDir, repoURL, revisio
 	processedApps := map[string]struct{}{}
 	err = recursivelyApplyApps(ctxRecursiveApply, kubeClient, acd, &numRecursions, &processedApps, hooksDir, [2]string{repoURL, revision})
 	if err != nil {
-		logmsg.Error(ErrMsgRecursivelyApplyingAppsFailed, err)
-		os.Exit(ExitRecursivelyApplyingAppsFailed)
+		logmsg.Error("recursive applying apps failed", err)
+		os.Exit(exitRecursivelyApplyingAppsFailed)
 	}
 	logmsg.Info("Finished recursively applying applications.")
 
 	// dump app manifests to the outputs directory
 	err = dumpAppManifests(ctxArgoCD, acd, outputAppsDir)
 	if err != nil {
-		logmsg.Error(ErrMsgDumpingAppManifestsFailed, err)
-		os.Exit(ExitDumpingAppManifestsFailed)
+		logmsg.Error("dumping app manifests failed", err)
+		os.Exit(exitDumpingAppManifestsFailed)
 	}
 	logmsg.Info(fmt.Sprintf("Finished dumping app manifests to %s directory.", outputAppsDir))
 }
 
 func getKubeContext() string {
-	return fmt.Sprintf("kind-%s", KindName)
+	return fmt.Sprintf("kind-%s", kindName)
 }
 
 func executeHookIfExists(ctx context.Context, hookPath string, envVars map[string]string) error {
@@ -340,8 +373,8 @@ func extractAndApplyAppsFromManifestsYAML(ctx context.Context, path string, kube
 
 func recursivelyApplyApps(ctx context.Context, kubeClient *kube.Kube, acd *argocd.ArgoCD, numRecursions *int, processedApps *map[string]struct{}, hooksDir string, target [2]string) error {
 	*numRecursions++
-	if *numRecursions > MaxRecursions {
-		return fmt.Errorf("max recursions of %d reached", MaxRecursions)
+	if *numRecursions > maxRecursions {
+		return fmt.Errorf("max recursions of %d reached", maxRecursions)
 	}
 
 	added := false
@@ -562,4 +595,57 @@ func dumpAppManifests(ctx context.Context, acd *argocd.ArgoCD, dir string) error
 		}
 	}
 	return nil
+}
+
+func checkPrerequisites() {
+	logmsg.Info("Checking prerequisites...")
+
+	_, err := exec.LookPath("kind")
+	if err != nil {
+		logmsg.Error("kind not found in PATH", nil)
+		os.Exit(exitKindNotFound)
+	}
+
+	_, err = exec.LookPath("argocd")
+	if err != nil {
+		logmsg.Error("argocd not found in PATH", nil)
+		os.Exit(exitArgoCDNotFound)
+	}
+
+	_, err = exec.LookPath("kubectl")
+	if err != nil {
+		logmsg.Error("kubectl not found in PATH", nil)
+		os.Exit(exitKubectlNotFound)
+	}
+}
+
+func checkDirs(manifests, secrets, hooks, outputs string) {
+	for _, dir := range [4]string{manifests, secrets, hooks, outputs} {
+		if dir == "" {
+			continue
+		}
+
+		info, err := os.Stat(dir)
+		if err != nil {
+			if os.IsNotExist(err) {
+				logmsg.Error(fmt.Sprintf("%s directory not found: %v", dir, err), nil)
+				os.Exit(exitDirNotFound)
+			}
+			logmsg.Error(fmt.Sprintf("Error checking %s directory: %v", dir, err), nil)
+			os.Exit(exitDirNotFound)
+		}
+		if !info.IsDir() {
+			logmsg.Error(fmt.Sprintf("%s exists but is not a directory", dir), nil)
+			os.Exit(exitDirNotFound)
+		}
+	}
+	entries, err := os.ReadDir(outputs)
+	if err != nil {
+		logmsg.Error(fmt.Sprintf("Error reading %s directory: %v", outputs, err), nil)
+		os.Exit(exitOutputsDirNotFound)
+	}
+	if len(entries) > 0 {
+		logmsg.Error(fmt.Sprintf("output dir %s not empty: %v", outputs, err), nil)
+		os.Exit(exitOutputsDirNotEmpty)
+	}
 }

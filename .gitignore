@@ -33,5 +33,5 @@ go.work.sum
 
 /cmd/apps/apps
 /cmd/diff/diff
-/outputs*
+/output*
 /hooks
