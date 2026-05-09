@@ -8,7 +8,8 @@ before:
     - go mod tidy
 
 builds:
-  - env:
+  - id: app-of-apps-dump
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
@@ -19,7 +20,8 @@ builds:
       - arm64
     main: ./cmd/apps
     binary: app-of-apps-dump
-  - env:
+  - id: app-of-apps-diff
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
