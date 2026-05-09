@@ -1,0 +1,6 @@
+apiVersion: v2
+name: stage5-10-helm
+description: A Helm chart that creates a simple ConfigMap
+type: application
+version: 0.1.0
+appVersion: "1.0"

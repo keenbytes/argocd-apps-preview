@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stage5-10-helm
+  namespace: tools
+spec:
+  project: stage4a
+  source:
+    repoURL: https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview
+    targetRevision: main
+    path: example/stage5-10-helm
+    helm:
+      releaseName: stage5-10-helm
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tools
+  syncPolicy:
+    automated: {}

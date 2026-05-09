@@ -1,0 +1,4 @@
+configName: "stage5-10-helm"
+configData:
+  key1: "value1"
+  key2: "value2"
