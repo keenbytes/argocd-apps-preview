@@ -20,7 +20,9 @@ jobs:
           wget $APP_OF_APPS_URL -O app-of-apps.zip
           unzip app-of-apps.zip -x "LICENSE"
           rm app-of-apps.zip
-          chmod +x ./app-of-apps*
+          mv ./app-of-apps-dump /usr/local/bin/app-of-apps-dump
+          mv ./app-of-apps-diff /usr/local/bin/app-of-apps-diff
+          chmod +x /usr/local/bin/app-of-apps*
 
       - name: Create outputs directories
         env:
@@ -29,6 +31,22 @@ jobs:
           rm -rf outputs*
           mkdir outputs-{main,diff}
           mkdir outputs-${{env.BRANCH_NAME}}
+
+      - name: Install dependencies
+        run: |
+          # Install kind
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.31.0/kind-linux-amd64
+          chmod +x ./kind
+          mv ./kind /usr/local/bin/kind
+
+          # Install kubectl
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+          # Install argocd CLI
+          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/v2.7.6/argocd-linux-amd64
+          chmod +x argocd-linux-amd64
+          mv ./argocd-linux-amd64 /usr/local/bin/argocd
 
       - name: Dump applications from main
         run: |
