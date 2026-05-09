@@ -46,19 +46,19 @@ jobs:
 
       - name: Dump applications from main
         run: |
-          ./app-of-apps-dump --manifests ./manifests --output-apps ./outputs-main/ \
+          app-of-apps-dump --manifests ./manifests --output-apps ./outputs-main/ \
             --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
             --replace-target-revision main
 
       - name: Dump applications from branch
         run: |
-          ./app-of-apps-dump --manifests ./manifests --output-apps ./outputs-${{env.BRANCH_NAME}}/ \
+          app-of-apps-dump --manifests ./manifests --output-apps ./outputs-${{env.BRANCH_NAME}}/ \
             --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
             --replace-target-revision ${{env.BRANCH_NAME}}
 
       - name: Generate diff
         run: |
-          ./app-of-apps-diff \
+          app-of-apps-diff \
             --apps-base ./outputs-main/ \ 
             --apps-target ./outputs-${{env.BRANCH_NAME}}/ \ 
             --output-diff ./outputs-diff/
