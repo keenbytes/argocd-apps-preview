@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         app: stage3-1-nginx
+        someLabel: someValue
+        anotherLabel: anotherValue
     spec:
       containers:
         - name: nginx
