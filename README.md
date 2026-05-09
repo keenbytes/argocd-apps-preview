@@ -8,8 +8,8 @@ nested Applications and ApplicationSets.
 - 📋 Generate previews for app-of-apps configurations
 - 🔍 Compute diffs between two sets of application manifests
 - 🔄 Branch switching support
-- ⚡ Lightweight, single binary distribution
-
+- ⚡ Lightweight, two single binaries: one for dumping applications and one for generating diff
+- 
 ## Motivation
 
 While there are excellent tools available today for previewing ArgoCD changes, most struggle with the complexity of 
@@ -36,20 +36,35 @@ The following tools must be installed:
 ## Running
 
 ```
+# Create output directories
 rm -rf outputs*
 mkdir outputs-{main,example-1,diff}
-cd cmd/apps/ && go build . && cd ../../
-cd cmd/diff/ && go build . && cd ../../
 
-./cmd/apps/apps --manifests ./manifests --output-apps ./outputs-main/ \
+# Download binaries
+export APP_OF_APPS_DIR=~/bin/app-of-apps
+export APP_OF_APPS_VERSION=0.1.0
+export APP_OF_APPS_ARCH=linux_amd64
+APP_OF_APPS_URL=https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview/releases/download/v${APP_OF_APPS_VERSION}/argocd-app-of-apps-diff-preview_${APP_OF_APPS_VERSION}_${APP_OF_APPS_ARCH}.zip \
+APP_OF_APPS_ZIP=$APP_OF_APPS_DIR/app-of-apps.zip && \
+mkdir -p $APP_OF_APPS_DIR && \
+wget $APP_OF_APPS_URL -O $APP_OF_APPS_ZIP && \
+unzip $APP_OF_APPS_ZIP -d $APP_OF_APPS_DIR && \
+rm $APP_OF_APPS_ZIP && \
+chmod +x $APP_OF_APPS_DIR/app-of-apps*
+
+# Add downloaded binaries to PATH
+export PATH=$PATH:$APP_OF_APPS_DIR
+
+# Dump manifests with all the ApplicationSets and Applications
+app-of-apps-dump --manifests ./manifests --output-apps ./outputs-main/ \
   --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
   --replace-target-revision main
-
-./cmd/apps/apps --manifests ./manifests --output-apps ./outputs-example-1/ \
+app-of-apps-dump --manifests ./manifests --output-apps ./outputs-example-1/ \
   --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
   --replace-target-revision example-1
 
-./cmd/diff/diff --apps-base ./outputs-main/ --apps-target ./outputs-example-1/ --output-diff ./outputs-diff/
+# Generate preview of the diff
+app-of-apps-diff --apps-base ./outputs-main/ --apps-target ./outputs-example-1/ --output-diff ./outputs-diff/
 ```
 
 ## Contributing
