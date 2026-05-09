@@ -51,12 +51,16 @@ jobs:
             --replace-target-revision main
 
       - name: Dump applications from branch
+        env:
+          BRANCH_NAME: ${{github.head_ref}}
         run: |
           app-of-apps-dump --manifests ./manifests --output-apps ./outputs-${{env.BRANCH_NAME}}/ \
             --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
             --replace-target-revision ${{env.BRANCH_NAME}}
 
       - name: Generate diff
+        env:
+          BRANCH_NAME: ${{github.head_ref}}
         run: |
           app-of-apps-diff \
             --apps-base ./outputs-main/ \ 
