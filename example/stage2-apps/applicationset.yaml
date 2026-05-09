@@ -10,7 +10,6 @@ spec:
         revision: main
         directories:
           - path: example/stage3-1-nginx
-          - path: example/stage3-2-nginx
           - path: example/stage3-3-app
           - path: example/stage3-4-app
   template:
