@@ -45,25 +45,29 @@ jobs:
           mv ./argocd-linux-amd64 /usr/local/bin/argocd
 
       - name: Dump applications from main
+        env:
+          REPO_NAME: ${{github.repository}}
         run: |
           app-of-apps-dump --manifests ./manifests --output-apps ./outputs-main/ \
-            --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
+            --replace-repo-url https://github.com/${{env.REPO_NAME}} \
             --replace-target-revision main
 
       - name: Dump applications from branch
         env:
+          REPO_NAME: ${{github.repository}}
           BRANCH_NAME: ${{github.head_ref}}
         run: |
           app-of-apps-dump --manifests ./manifests --output-apps ./outputs-${{env.BRANCH_NAME}}/ \
-            --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
+            --replace-repo-url https://github.com/${{env.REPO_NAME}} \
             --replace-target-revision ${{env.BRANCH_NAME}}
 
       - name: Generate diff
         env:
+          REPO_NAME: ${{github.repository}}
           BRANCH_NAME: ${{github.head_ref}}
         run: |
           app-of-apps-diff \
-            --apps-base ./outputs-main/ \ 
+            --apps-base ./outputs-main/ \
             --apps-target ./outputs-${{env.BRANCH_NAME}}/ \ 
             --output-diff ./outputs-diff/
 
