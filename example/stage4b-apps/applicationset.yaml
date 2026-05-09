@@ -10,7 +10,7 @@ spec:
         revision: main
         directories:
           - path: example/stage5-1-nginx
-          - path: example/stage5-2-nginx
+          - path: example/stage5-3-nginx-example-1
   template:
     metadata:
       name: '{{path.basename}}'
