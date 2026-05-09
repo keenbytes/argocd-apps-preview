@@ -37,7 +37,8 @@ jobs:
         env:
           APP_OF_APPS_DIR: ~/bin/app-of-apps
         run: |
-          ${{env.APP_OF_APPS_DIR}}/app-of-apps-dump --manifests ./manifests --output-apps ./outputs-main/ \
+          export PATH=$PATH:${{env.APP_OF_APPS_DIR}}
+          app-of-apps-dump --manifests ./manifests --output-apps ./outputs-main/ \
             --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
             --replace-target-revision main
 
@@ -46,7 +47,8 @@ jobs:
           APP_OF_APPS_DIR: ~/bin/app-of-apps
           BRANCH_NAME: ${{github.head_ref}}
         run: |
-          ${{env.APP_OF_APPS_DIR}}/app-of-apps-dump --manifests ./manifests --output-apps ./outputs-${{env.BRANCH_NAME}}/ \
+          export PATH=$PATH:${{env.APP_OF_APPS_DIR}}
+          app-of-apps-dump --manifests ./manifests --output-apps ./outputs-${{env.BRANCH_NAME}}/ \
             --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
             --replace-target-revision ${{env.BRANCH_NAME}}
 
@@ -55,7 +57,8 @@ jobs:
           APP_OF_APPS_DIR: ~/bin/app-of-apps
           BRANCH_NAME: ${{github.head_ref}}
         run: |
-          ${{env.APP_OF_APPS_DIR}}/app-of-apps-diff \
+          export PATH=$PATH:${{env.APP_OF_APPS_DIR}}
+          app-of-apps-diff \
             --apps-base ./outputs-main/ \ 
             --apps-target ./outputs-${{env.BRANCH_NAME}}/ \ 
             --output-diff ./outputs-diff/
