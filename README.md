@@ -9,7 +9,7 @@ nested Applications and ApplicationSets.
 - 🔍 Compute diffs between two sets of application manifests
 - 🔄 Branch switching support
 - ⚡ Lightweight, two single binaries: one for dumping applications and one for generating diff
-- 
+
 ## Motivation
 
 While there are excellent tools available today for previewing ArgoCD changes, most struggle with the complexity of 
