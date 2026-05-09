@@ -12,18 +12,15 @@ jobs:
 
       - name: Download app-of-apps diff preview
         env:
-          APP_OF_APPS_DIR: ~/bin/app-of-apps
           APP_OF_APPS_VERSION: 0.1.0
           APP_OF_APPS_ARCH: linux_amd64
         run: |
           APP_OF_APPS_URL=https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview/releases/download/v${APP_OF_APPS_VERSION}/argocd-app-of-apps-diff-preview_${APP_OF_APPS_VERSION}_${APP_OF_APPS_ARCH}.zip \
-          APP_OF_APPS_ZIP=$APP_OF_APPS_DIR/app-of-apps.zip && \
           
-          mkdir -p $APP_OF_APPS_DIR && \
-          wget $APP_OF_APPS_URL -O $APP_OF_APPS_ZIP && \
-          unzip $APP_OF_APPS_ZIP -d $APP_OF_APPS_DIR && \
-          rm $APP_OF_APPS_ZIP && \
-          chmod +x $APP_OF_APPS_DIR/app-of-apps*
+          wget $APP_OF_APPS_URL -O app-of-apps.zip
+          unzip app-of-apps.zip
+          rm app-of-apps.zip
+          chmod +x ./app-of-apps*
 
       - name: Create outputs directories
         env:
@@ -34,28 +31,20 @@ jobs:
           mkdir outputs-${{env.BRANCH_NAME}}
 
       - name: Dump applications from main
-        env:
-          APP_OF_APPS_DIR: ~/bin/app-of-apps
         run: |
-          ${{env.APP_OF_APPS_DIR}}/app-of-apps-dump --manifests ./manifests --output-apps ./outputs-main/ \
+          ./app-of-apps-dump --manifests ./manifests --output-apps ./outputs-main/ \
             --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
             --replace-target-revision main
 
       - name: Dump applications from branch
-        env:
-          APP_OF_APPS_DIR: ~/bin/app-of-apps
-          BRANCH_NAME: ${{github.head_ref}}
         run: |
-          ${{env.APP_OF_APPS_DIR}}/app-of-apps-dump --manifests ./manifests --output-apps ./outputs-${{env.BRANCH_NAME}}/ \
+          ./app-of-apps-dump --manifests ./manifests --output-apps ./outputs-${{env.BRANCH_NAME}}/ \
             --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
             --replace-target-revision ${{env.BRANCH_NAME}}
 
       - name: Generate diff
-        env:
-          APP_OF_APPS_DIR: ~/bin/app-of-apps
-          BRANCH_NAME: ${{github.head_ref}}
         run: |
-          ${{env.APP_OF_APPS_DIR}}/app-of-apps-diff \
+          ./app-of-apps-diff \
             --apps-base ./outputs-main/ \ 
             --apps-target ./outputs-${{env.BRANCH_NAME}}/ \ 
             --output-diff ./outputs-diff/
