@@ -68,7 +68,7 @@ jobs:
         run: |
           app-of-apps-diff \
             --apps-base ./outputs-main/ \
-            --apps-target ./outputs-${{env.BRANCH_NAME}}/ \ 
+            --apps-target ./outputs-${{env.BRANCH_NAME}}/ \
             --output-diff ./outputs-diff/
 
       - name: Upload diff
