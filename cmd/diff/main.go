@@ -77,6 +77,11 @@ func execute(appsBaseDir, appsTargetDir, outputDiffDir string) {
 	if err != nil {
 		logmsg.Error("failed to process split dir", err)
 	}
+
+	err = diff.GenerateMarkdown(splitDir, outputDiffDir)
+	if err != nil {
+		logmsg.Error("failed to generate markdown", err)
+	}
 }
 
 func checkPrerequisites() {
