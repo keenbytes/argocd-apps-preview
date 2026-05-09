@@ -13,6 +13,11 @@ spec:
     metadata:
       labels:
         app: stage4a-nginx
+        someLabel: example-1
+        andOneMore: example-1
+        otherLabel: example-1
+        anotherLabel: example-1
+        andOneMoreAgain: example-1
     spec:
       containers:
         - name: nginx
