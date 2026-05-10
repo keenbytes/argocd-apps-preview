@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stage5-11-kustomize
+  namespace: tools
+spec:
+  project: stage4a
+  source:
+    repoURL: https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview
+    targetRevision: main
+    path: example/stage5-11-kustomize
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tools
+  syncPolicy:
+    automated: {}
