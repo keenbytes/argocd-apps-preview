@@ -102,7 +102,7 @@ app-of-apps-dump --manifests ./manifests --output-apps ./outputs-main/ \
   --replace-target-revision main
 app-of-apps-dump --manifests ./manifests --output-apps ./outputs-example-1/ \
   --replace-repo-url https://github.com/mikolajgasior/argocd-app-of-apps-diff-preview \
-  --replace-target-revision example-1
+  --replace-target-revision example-1 --hooks ./example-hooks
 
 # Generate preview of the diff
 app-of-apps-diff --apps-base ./outputs-main/ --apps-target ./outputs-example-1/ --output-diff ./outputs-diff/
