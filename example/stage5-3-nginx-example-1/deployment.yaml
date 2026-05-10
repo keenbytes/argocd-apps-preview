@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stage3-2-nginx
+  name: stage5-3-nginx-example-1
   labels:
-    app: stage3-2-nginx
+    app: stage5-3-nginx-example-1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: stage3-2-nginx
+      app: stage5-3-nginx-example-1
   template:
     metadata:
       labels:
-        app: stage3-2-nginx
+        app: stage5-3-nginx-example-1
     spec:
       containers:
         - name: nginx
