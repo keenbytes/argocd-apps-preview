@@ -2,6 +2,9 @@
 A lightweight Go utility for generating previews and computing diffs for ArgoCD "app-of-apps" configurations, including 
 nested Applications and ApplicationSets.
 
+## Full documentation
+[Link to docs](https://mikolajgasior.github.io/argocd-app-of-apps-diff-preview/)
+
 ## Expected Features
 
 - 🌳 Handle nested applications and ApplicationSets
@@ -16,7 +19,7 @@ While there are excellent tools available today for previewing ArgoCD changes, m
 "app-of-apps" patterns where applications nest other applications or ApplicationSets.
 
 I designed this tool specifically with **Pull Request workflows** in mind. When reviewing changes that span multiple 
-Helm charts and Kustomize overlays, it is often difficult to determine exactly what will be applied to the cluster after
+Helm charts and Kustomize overlays, it is often tricky to determine exactly what will be applied to the cluster after
 the merge. Existing tools typically stop at the top-level manifest, leaving reviewers blind to the downstream effects of
 nested configurations.
 

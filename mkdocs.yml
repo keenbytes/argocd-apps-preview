@@ -1,0 +1,24 @@
+site_name: argocd-apps-of-apps-diff-preview
+site_url: https://github.com/mikolajgasior/argocd-apps-of-apps-diff-preview
+theme:
+  icon:
+    repo: fontawesome/brands/github
+  name: material
+  palette:
+    scheme: slate
+    primary: brown
+    accent: orange
+nav:
+  - Overview: index.md
+  - Prerequisites: prerequisites.md
+  - Demo: demo.md
+  - Hooks: hooks.md
+  - Secrets: secrets.md
+  - GitHub Actions Workflow: github-actions-workflow.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/mikolajgasior/argocd-apps-of-apps-diff-preview
+
+copyright: Copyright &copy; 2025-2026 Mikołaj Gąsior
