@@ -6,8 +6,8 @@ theme:
   name: material
   palette:
     scheme: slate
-    primary: brown
-    accent: orange
+    primary: black
+    accent: lime
 nav:
   - Overview: index.md
   - Prerequisites: prerequisites.md
